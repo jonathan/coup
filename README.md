@@ -16,12 +16,12 @@ they will do. That seq will be the basis for evolving better AI.
 Right now only the GA works. You can prove that by starting a
 repl with `lein repls` and doing the following:
 
-'''
+```
 coup.core=> (use 'ga.core)
 nil
 coup.core=> (ga.core/evolve)
 {:chromosome (\a \b \c \d \e \f \g \h \i \j \k \l \m \n \o \p \q \r \s \t \u \v \w \x \y \z), :fitness 26}
-'''
+```
 
 This shows that the GA is working. More logging needs to be added
 for better stats tracking and debugging.
