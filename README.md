@@ -14,7 +14,7 @@ they will do. That seq will be the basis for evolving better AI.
 ## Examples
 
 Right now only the GA works. You can prove that by starting a
-repl with `lein repls` and doing the following:
+repl with `lein repl` and doing the following:
 
 ```
 coup.core=> (use 'ga.core)
