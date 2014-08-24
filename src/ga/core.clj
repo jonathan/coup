@@ -21,8 +21,7 @@
   []
   (let [chromosome (repeatedly (count ideal) #(rand-nth ideal))
         fit (fitness chromosome)]
-    {:chromosome chromosome
-     :fitness    fit}))
+    {:chromosome chromosome}))
 
 (defn gen-population
   "Creates a sequence of individuals based on the passed in size."
@@ -41,7 +40,8 @@
 (defn top-winners
   "Returns the a number of winners from the given tournament seq."
   [tournament]
-  (take winner-size (sort-by :fitness > tournament)))
+  (let [tourney-results (map #(assoc % :fitness (fitness (:chromosome %))) tournament)]
+    (take winner-size (sort-by :fitness > tourney-results))))
 
 (defn crossover
   "Takes two individuals and determines if crossover should be performed
@@ -49,17 +49,11 @@
   crossover should be performed or returns the original individuals otherwise"
   [{ind1 :chromosome} {ind2 :chromosome}]
   (if (> crossover-pct (rand-int 100))
-    (let [cross-point (rand-int (count ideal))
-          new-chrom1 (concat (take cross-point ind1) (drop cross-point ind2))
-          new-chrom2 (concat (take cross-point ind2) (drop cross-point ind1))]
-      (list {:chromosome new-chrom1
-        :fitness    (fitness new-chrom1)}
-        {:chromosome new-chrom2
-        :fitness    (fitness new-chrom2)}))
-    (list {:chromosome ind1
-        :fitness    (fitness ind1)}
-        {:chromosome ind2
-        :fitness    (fitness ind2)})))
+    (let [cross-point (rand-int (count ideal))]
+      (list {:chromosome (concat (take cross-point ind1) (drop cross-point ind2))}
+            {:chromosome (concat (take cross-point ind2) (drop cross-point ind1))}))
+    (list {:chromosome ind1}
+          {:chromosome ind2})))
 
 (defn mutate
   "Takes a population sequence and determines if the any of the individuals
