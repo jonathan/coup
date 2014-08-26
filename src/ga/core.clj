@@ -19,9 +19,7 @@
   "Create a hash-map that represents an individual. The keys are
   :chromosome and :fitness."
   []
-  (let [chromosome (repeatedly (count ideal) #(rand-nth ideal))
-        fit (fitness chromosome)]
-    {:chromosome chromosome}))
+  {:chromosome (repeatedly (count ideal) #(rand-nth ideal))})
 
 (defn gen-population
   "Creates a sequence of individuals based on the passed in size."
@@ -61,16 +59,14 @@
   [population]
   (map (fn [ind]
             (if (> mutate-pct (rand-int 100))
-            (let [chrom (seq (assoc (vec (:chromosome ind)) (rand-int (count ideal)) (rand-nth ideal)))
-                  fitness (fitness chrom)]
-              {:chromosome chrom
-               :fitness fitness})
-            ind)) population))
+              {:chromosome (seq (assoc (vec (:chromosome ind)) (rand-int (count ideal)) (rand-nth ideal)))}
+              ind))
+       population))
 
 (defn found-max
   "Checks if any individual in the population matches the ideal."
   [population]
-  (some #(= (count ideal) (:fitness %)) population))
+  (some #(= (count ideal) (:fitness %)) (flatten population)))
 
 (defn stopping-criteria
   "Checks if evolution for a given population and generation should continue."
@@ -82,10 +78,9 @@
   []
   (loop [population (gen-population population-size)
          gen-num 0]
-    (if (stopping-criteria population gen-num)
       (let [tourneys (gen-tournaments population)
-            winners (map top-winners tourneys)
-            new-pop (flatten (map #(crossover (first %) (second %)) winners))]
-        (recur (mutate new-pop) (inc gen-num)))
-      (first (filter #(= (count ideal) (:fitness %)) population)))))
+            winners (map top-winners tourneys)]
+        (if (stopping-criteria winners gen-num)
+          (recur (mutate (flatten (map #(crossover (first %) (second %)) winners))) (inc gen-num))
+          (first (filter #(= (count ideal) (:fitness %)) (flatten winners)))))))
 
