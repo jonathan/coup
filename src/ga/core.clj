@@ -79,8 +79,8 @@
   (loop [population (gen-population population-size)
          gen-num 0]
       (let [tourneys (gen-tournaments population)
-            winners (map top-winners tourneys)]
+            winners (pmap top-winners tourneys)]
         (if (stopping-criteria winners gen-num)
-          (recur (mutate (flatten (map #(crossover (first %) (second %)) winners))) (inc gen-num))
+          (recur (mutate (flatten (pmap #(crossover (first %) (second %)) winners))) (inc gen-num))
           (first (filter #(= (count ideal) (:fitness %)) (flatten winners)))))))
 
