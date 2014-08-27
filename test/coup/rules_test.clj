@@ -24,7 +24,10 @@
        (fact "removes the given role"
              (rules/remove-influence {:influence [:duke :captain]} :captain) => {:influence [:duke]}
              (rules/remove-influence {:influence [:duke :captain]} :duke) => {:influence [:captain]}
-             (rules/remove-influence {:influence [:duke]} :duke) => {:influence []}))
+             (rules/remove-influence {:influence [:duke]} :duke) => {:influence []})
+       (fact "adds the given role"
+             (rules/add-influence {:influence []} :duke) => {:influence [:duke]}
+             (rules/add-influence {:influence [:captain]} :duke) => {:influence [:captain :duke]}))
 
 (facts "about assassinate"
        (fact "decreases the first players coins by 3"
@@ -32,6 +35,14 @@
        (fact "decreases the second players influence by 1"
              (rules/assassinate {:coins 7} {:influence [:duke :captain]} :duke) => [{:coins 4} {:influence [:captain]}]))
 
+(facts "about exchange"
+       (fact "replaces an influence from a player with one from the deck"
+             (rules/exchange {:influence [:duke :captain]} :duke [:contessa]) => [{:influence [:captain :contessa]} [:duke]]
+             (rules/exchange {:influence [:duke :captain]} :duke [:contessa :contessa]) => [{:influence [:captain :contessa]} [:contessa :duke]]
+             (rules/exchange {:influence [:duke :duke]} :duke [:contessa :contessa]) => [{:influence [:duke :contessa]} [:contessa :duke]]))
+
 (facts "about steal"
        (fact "inc the first players coins by 2 and dec the second players coins by 2"
-             (rules/steal {:coins 2} {:coins 2}) => [{:coins 4} {:coins 0}]))
+             (rules/steal {:coins 2} {:coins 2}) => [{:coins 4} {:coins 0}])
+       (fact "if the second player only has one coin, only inc/dec by one"
+             (rules/steal {:coins 2} {:coins 1}) => [{:coins 3} {:coins 0}]))

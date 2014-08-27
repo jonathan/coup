@@ -1,15 +1,11 @@
 (ns coup.rules)
 
 (def roles [:duke :assassin :ambassador :captain :contessa])
+(def actions [:income :foreign-aid :coup :tax :assassinate :exchange :steal])
 
-(defn gen-player
-  []
-  {:influence [(rand-nth roles) (rand-nth roles)]
-   :coins 0})
-
-(defn gen-players
-  [player-count]
-  (repeatedly player-count gen-player))
+(defn add-influence
+  [player role]
+  (update-in player [:influence] conj role))
 
 (defn remove-influence
   [player role]
@@ -37,8 +33,15 @@
   [(update-in player-a [:coins] - 3)
    (remove-influence player-b role)])
 
+(defn exchange
+  [player role deck]
+  [(remove-influence (add-influence player (peek deck)) role) (conj (pop deck) role)])
+
 (defn steal
   [player-a player-b]
-  [(update-in player-a [:coins] + 2)
-   (update-in player-b [:coins] - 2)])
+  (if (= 1 (:coins player-b))
+    [(update-in player-a [:coins] inc)
+      (update-in player-b [:coins] dec)]
+    [(update-in player-a [:coins] + 2)
+      (update-in player-b [:coins] - 2)]))
 
