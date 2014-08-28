@@ -1,15 +1,40 @@
 (ns coup.game
-  (:require [coup.rules :as rules]))
+  (:require [coup.rules :as rules]
+            [coup.player-ai :as player-ai]))
 
 (defn gen-player
-  []
+  [player-name]
   {:influence [(rand-nth rules/roles) (rand-nth rules/roles)]
-   :coins 0})
+   :coins 2
+   :player-name (str player-name)})
 
 (defn gen-players
-  [player-count]
-  (repeatedly player-count gen-player))
+  [names]
+  (map gen-player names))
 
 (defn gen-game
-  [{:keys [player-count] :as game-options}]
-  (gen-players player-count))
+  [{:keys [player-names] :or {player-names ["player-a" "player-b"]} :as game-options}]
+  (if-not (nil? (get :game-state game-options))
+    (get :game-state game-options)
+    {:players (vec (gen-players player-names))
+     :bank (- 50 (* 2 (count player-names)))}))
+
+(defn remove-players
+  "Given the game-state, players without any influence are removed."
+  [game-state]
+  (assoc game-state :players (filter #(not= 0 (count (get % :influence))) (get game-state :players))))
+
+(defn game-over?
+  "Returns 'true' if there is only one player left. 'false' otherwise."
+  [game-state]
+  (if (= 1 (count (get-in game-state [:players]))) true false))
+
+(defn run-game
+  [{:keys [testing] :or {testing false} :as game-options}]
+  (let [game-state (gen-game game-options)]
+    (if-not testing
+      (case (player-ai/read-input)
+        "1" "looks like you want to do Income"
+        "2" "Foreign Aid, eh?"
+        "Can't figure you out."))
+    (get-in game-state [:players 0 :player-name])))
