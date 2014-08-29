@@ -9,8 +9,12 @@
   (print "Action (1-2): ")
   (read-line))
 
+(defn choose-player
+  [player game-state]
+  (first (filter #(not= (get player :player-name) (get % :player-name)) (get game-state :players))))
+
 (defn make-decision
   [player game-state]
   (if (>= (get player :coins) 7)
-    :coup
-    :income))
+    [:coup player (choose-player player game-state)]
+    [:income player]))

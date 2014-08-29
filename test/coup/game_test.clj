@@ -18,6 +18,9 @@
       (game/remove-players (assoc-in game-state [:players 0 :influence] [])) => (assoc game-state :players (subvec (get game-state :players) 1))
       (game/remove-players (assoc-in game-state [:players 1 :influence] [])) => (assoc game-state :players (pop (get game-state :players))))
 
+(fact "update-player updates a player object in the players hash"
+      (game/update-player game-state {:player-name "player-b" :influence []}) => (assoc-in game-state [:players 1 :influence] []))
+
 (fact "the game is over when there is only one player left"
       (game/game-over? {:players [:first]}) => true
       (game/game-over? {:players [:first :second]}) => false)

@@ -19,6 +19,13 @@
     {:players (vec (gen-players player-names))
      :bank (- 50 (* 2 (count player-names)))}))
 
+(defn update-player
+  "Updates a player hash-map in the game-state's players vec"
+  [game-state player]
+  (let [player-name (get player :player-name)
+        player-idx (first (keep-indexed #(if (= player-name (get %2 :player-name)) %1) (get game-state :players)))]
+  (assoc-in game-state [:players player-idx] player)))
+
 (defn remove-players
   "Given the game-state, players without any influence are removed."
   [game-state]
@@ -29,12 +36,17 @@
   [game-state]
   (if (= 1 (count (get-in game-state [:players]))) true false))
 
-(defn run-game
-  [{:keys [testing] :or {testing false} :as game-options}]
-  (let [game-state (gen-game game-options)]
-    (if-not testing
-      (case (player-ai/read-input)
-        "1" "looks like you want to do Income"
-        "2" "Foreign Aid, eh?"
-        "Can't figure you out."))
-    (get-in game-state [:players 0 :player-name])))
+(defn next-player
+  "Gets the next player in the lineup"
+  [{:keys [players]} player]
+    (first players))
+;(defn run-game
+;  [{:keys [testing] :or {testing false} :as game-options}]
+;  (loop [game-state (gen-game game-options)]
+;    (if-not (game-over? game-state)
+;      (if-not testing
+;        (case (player-ai/read-input)
+;          "1" "looks like you want to do Income"
+;          "2" "Foreign Aid, eh?"
+;          "Can't figure you out."))
+;      (get-in game-state [:players 0 :player-name]))))
