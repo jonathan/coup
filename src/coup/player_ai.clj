@@ -18,3 +18,9 @@
   (if (>= (get player :coins) 7)
     [:coup player (choose-player player game-state)]
     [:income player]))
+
+(defn execute-action
+  [[action player]]
+  (case action
+        :income (rules/income player)))
+        ;:coup   (rules/coup (first players) (second players))))

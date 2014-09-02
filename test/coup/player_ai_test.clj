@@ -21,3 +21,7 @@
 (facts "about choose-player"
        (fact "the chosen player isn't the one passed in"
              (player-ai/choose-player player-a game-state) => player-b))
+
+(fact "about execute-action"
+      (fact "the income action and player-a should run the income action on them"
+            (player-ai/execute-action [:income (assoc player-a :coins 0)]) => (assoc player-a :coins 1)))

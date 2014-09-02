@@ -39,7 +39,12 @@
 (defn next-player
   "Gets the next player in the lineup"
   [{:keys [players]} player]
-    (first players))
+    (let [player-name (get player :player-name)
+          player-idx (.indexOf players player)]
+    (if (= (count players) (inc player-idx))
+      (first players)
+      (get players (inc player-idx)))))
+
 ;(defn run-game
 ;  [{:keys [testing] :or {testing false} :as game-options}]
 ;  (loop [game-state (gen-game game-options)]

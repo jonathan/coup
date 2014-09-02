@@ -12,7 +12,7 @@
       (get-in (game/gen-game {:player-names ["player-a" "player-b"]}) [:players 0 :player-name]) => "player-a")
 
 (fact "run-game returns the winner of the game"
-      (game/run-game {:testing true}) => "player-a")
+      (game/run-game {:testing true}) => (first (get game-state :players)))
 
 (fact "remove-players should remove a player from the game-state"
       (game/remove-players (assoc-in game-state [:players 0 :influence] [])) => (assoc game-state :players (subvec (get game-state :players) 1))
@@ -25,3 +25,8 @@
       (game/game-over? {:players [:first]}) => true
       (game/game-over? {:players [:first :second]}) => false)
 
+(facts "about next-player"
+       (fact "returns player-b for a 2 player game and given player-a"
+             (game/next-player game-state (first (get game-state :players))) => (second (game-state :players)))
+       (fact "returns player-a for a 2 player game and given player-b"
+             (game/next-player game-state (second (get game-state :players))) => (first (game-state :players))))
