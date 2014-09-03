@@ -27,4 +27,4 @@
 
 (fact "about execute-action"
       (fact "the income action and player-a should run the income action on them"
-            (execute-action [income (assoc player-a :coins 0)]) => (assoc player-a :coins 1)))
+            (execute-action [income (assoc player-a :coins 0)]) => [(assoc player-a :coins 1)]))
