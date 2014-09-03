@@ -17,11 +17,13 @@
 
 (fact "player-index returns the index of the player object in the game-state"
       (against-background (before :checks (reset! game-state test-game-state)))
-      (player-index (first (:players @game-state))) => 0
-      (player-index (second (:players @game-state))) => 1)
+      (#'coup.game/player-index (first (:players @game-state))) => 0
+      (#'coup.game/player-index (second (:players @game-state))) => 1)
 
 (fact "run-game returns the winner of the game"
-      (run-game {:testing true}) => (first (get @game-state :players)))
+      (run-game {:game-state test-game-state :testing true}) => {:player-name "player-a"
+                                                                 :coins 0
+                                                                 :influence [:assassin]})
 
 (fact "remove-players should remove a player from the game-state"
       (against-background (before :checks (reset! game-state (assoc-in test-game-state [:players 0 :influence] []))))

@@ -17,30 +17,29 @@
 (defn gen-game
   [{:keys [player-names] :or {player-names ["player-a" "player-b"]} :as game-options}]
   (if (contains? game-options :game-state)
-    (reset! game-state (get :game-state game-options))
+    (reset! game-state (get game-options :game-state))
     (reset! game-state {:players (vec (gen-players player-names))
                         :bank (- 50 (* 2 (count player-names)))})))
 
-(defn player-index
+(defn- player-index
   [{:keys [player-name]}]
   (first (keep-indexed #(if (= player-name (get %2 :player-name)) %1) (get @game-state :players))))
 
 (defn update-player
   "Updates a player hash-map in the game-state's players vec"
   [player]
-  (println "(from update-player) player:" player)
   (swap! game-state assoc-in [:players (player-index player)] player))
 
 (defn update-players
   [players]
-  (println "(from update-players) player:" players)
   (doseq [player players] (update-player player))
   @game-state)
 
 (defn remove-players
   "Given the game-state, players without any influence are removed."
   []
-  (swap! game-state assoc-in [:players] (filter #(not= 0 (count (get % :influence))) (get @game-state :players))))
+  (swap! game-state assoc-in [:players] (vec (filter #(not= 0 (count (get % :influence))) (get @game-state :players))))
+  @game-state)
 
 (defn game-over?
   "Returns 'true' if there is only one player left. 'false' otherwise."
@@ -50,12 +49,10 @@
 (defn next-player
   "Gets the next player in the lineup"
   [player]
-    (let [players (get @game-state :players)
-          player-name (get player :player-name)
-          player-idx (.indexOf players player)]
-    (if (= (count players) (inc player-idx))
+    (let [players (get @game-state :players)]
+    (if (= (count players) (inc (player-index player)))
       (first players)
-      (get players (inc player-idx)))))
+      (get players (inc (player-index player))))))
 
 (defn player-input
   [player]
@@ -64,8 +61,6 @@
   ;  "2" "Foreign Aid, eh?"
   ;  "Can't figure you out.")
   (update-players (player-ai/execute-action (player-ai/make-decision player @game-state)))
-  ; Remove any stale players from the game-state
-  (remove-players)
   (next-player player))
 
 (defn run-game
@@ -76,7 +71,7 @@
   ; Start the game loop with the first player
   (loop [player (first (get @game-state :players))]
     ; Remove any stale players from the game-state
-    ;(remove-players)
+    (remove-players)
     (if (game-over?)
       (first (get @game-state :players))
       ; Get the player's choice
