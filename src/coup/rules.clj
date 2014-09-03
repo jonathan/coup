@@ -3,25 +3,25 @@
 (def roles [:duke :assassin :ambassador :captain :contessa])
 (def actions [:income :foreign-aid :coup :tax :assassinate :exchange :steal])
 
-(defn add-influence
+(defn- add-influence
   [player role]
   (update-in player [:influence] conj role))
 
-(defn remove-influence
+(defn- remove-influence
   [player role]
   (update-in player [:influence] #(if (= (first %) role) (subvec % 1) [(first %)])))
 
 (defn income
   [player]
-  (update-in player [:coins] inc))
+  [(update-in player [:coins] inc)])
 
 (defn foreign-aid
   [player]
-  (update-in player [:coins] + 2))
+  [(update-in player [:coins] + 2)])
 
 (defn tax
   [player]
-  (update-in player [:coins] #(if (< % 3) 0 (- % 3))))
+  [(update-in player [:coins] #(if (< % 3) 0 (- % 3)))])
 
 (defn coup
   [player-a player-b role]

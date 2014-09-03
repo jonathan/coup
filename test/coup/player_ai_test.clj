@@ -1,6 +1,5 @@
 (ns coup.player-ai_test
-  (:use midje.sweet)               ;; <<==
-  (:require [coup.player-ai :as player-ai]))
+  (:use midje.sweet coup.rules coup.player-ai))
 
 (def player-a {:player-name "player-a"
                :influence [:duke :captain]})
@@ -13,15 +12,19 @@
 
 (facts "about make-decision"
        (fact "takes income by default"
-             (player-ai/make-decision (assoc player-a :coins 0) game-state) => [:income (assoc player-a :coins 0)])
+             (make-decision (assoc player-a :coins 0) game-state) => [income (assoc player-a :coins 0)])
        (fact "coups when the player has 7 or more coins"
-             (player-ai/make-decision (assoc player-a :coins 7) game-state) => [:coup (assoc player-a :coins 7) player-b]
-             (player-ai/make-decision (assoc player-a :coins 8) game-state) => [:coup (assoc player-a :coins 8) player-b]))
+             (make-decision (assoc player-a :coins 7) game-state) => [coup (assoc player-a :coins 7) player-b (first (get player-b :influence))]
+             (make-decision (assoc player-a :coins 8) game-state) => [coup (assoc player-a :coins 8) player-b (first (get player-b :influence))]))
 
 (facts "about choose-player"
        (fact "the chosen player isn't the one passed in"
-             (player-ai/choose-player player-a game-state) => player-b))
+             (choose-player player-a game-state) => player-b))
+
+(facts "about choose-influence"
+       (fact "the chosen player picks an influence to discard"
+             (choose-influence player-a) => :duke))
 
 (fact "about execute-action"
       (fact "the income action and player-a should run the income action on them"
-            (player-ai/execute-action [:income (assoc player-a :coins 0)]) => (assoc player-a :coins 1)))
+            (execute-action [income (assoc player-a :coins 0)]) => (assoc player-a :coins 1)))

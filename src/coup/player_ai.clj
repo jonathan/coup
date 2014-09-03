@@ -1,5 +1,5 @@
 (ns coup.player-ai
-  (:require [coup.rules :as rules]))
+  (:require [coup.rules :refer :all]))
 
 (defn read-input
   []
@@ -13,14 +13,17 @@
   [player game-state]
   (first (filter #(not= (get player :player-name) (get % :player-name)) (get game-state :players))))
 
+(defn choose-influence
+  [{:keys [influence]}]
+  (first influence))
+
 (defn make-decision
   [player game-state]
   (if (>= (get player :coins) 7)
-    [:coup player (choose-player player game-state)]
-    [:income player]))
+    (let [player-b (choose-player player game-state)]
+      [coup player player-b (choose-influence player-b)])
+    [income player]))
 
 (defn execute-action
-  [[action player]]
-  (case action
-        :income (rules/income player)))
-        ;:coup   (rules/coup (first players) (second players))))
+  [[action & players]]
+  (apply action players))
