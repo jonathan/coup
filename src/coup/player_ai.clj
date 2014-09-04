@@ -9,18 +9,22 @@
   (print "Action (1-2): ")
   (read-line))
 
-(defn choose-player
-  [player game-state]
+(defn- choose-player
+  [game-state player]
   (first (filter #(not= (get player :player-name) (get % :player-name)) (get game-state :players))))
 
-(defn choose-influence
+(defn- choose-influence
   [{:keys [influence]}]
   (first influence))
 
+(defn- assassinate?
+  [{:keys [influence coins]}]
+  (if (and (> coins 2) (some #(= % :assassin) influence)) true false))
+
 (defn make-decision
-  [player game-state]
+  [game-state player]
   (if (>= (get player :coins) 7)
-    (let [player-b (choose-player player game-state)]
+    (let [player-b (choose-player game-state player)]
       [coup player player-b (choose-influence player-b)])
     [income player]))
 

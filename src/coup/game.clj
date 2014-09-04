@@ -60,7 +60,7 @@
   ;  "1" "looks like you want to do Income"
   ;  "2" "Foreign Aid, eh?"
   ;  "Can't figure you out.")
-  (update-players (player-ai/execute-action (player-ai/make-decision player @game-state)))
+  (update-players (player-ai/execute-action (player-ai/make-decision @game-state player)))
   (next-player player))
 
 (defn run-game
