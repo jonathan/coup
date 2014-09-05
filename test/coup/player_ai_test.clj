@@ -40,3 +40,27 @@
        (fact "player-b should return 'true' for assassinating someone"
              (#'coup.player-ai/assassinate? (assoc player-b :coins 3)) => true
              (#'coup.player-ai/assassinate? (assoc player-b :coins 4)) => true))
+
+(facts "about coup?"
+       (fact "players shouldn't coup without 7 coins"
+             (#'coup.player-ai/coup? (assoc player-b :coins 0)) =not=> true)
+       (fact "player-a should return 'true' for couping"
+             (#'coup.player-ai/coup? (assoc player-a :coins 7)) => true))
+
+(facts "about tax?"
+       (fact "players shouldn't tax without the duke role"
+             (#'coup.player-ai/tax? player-b) =not=> true)
+       (fact "player-a should return 'true' for taxing"
+             (#'coup.player-ai/tax? player-a) => true))
+
+(facts "about exchange?"
+       (fact "players shouldn't exchange without the ambassador role"
+             (#'coup.player-ai/exchange? player-a) =not=> true)
+       (fact "player-b should return 'true' for exchanging"
+             (#'coup.player-ai/exchange? player-b) => true))
+
+(facts "about steal?"
+       (fact "players shouldn't steal without the captain role"
+             (#'coup.player-ai/steal? player-b) =not=> true)
+       (fact "player-b should return 'true' for stealing"
+             (#'coup.player-ai/steal? player-a) => true))

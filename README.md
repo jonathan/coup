@@ -10,6 +10,7 @@ complex interactions next and then work to integrate my AI lib, teletraan.
 ## Examples
 
 To run tests from the command line
+
 ```
 lein midje
 ```

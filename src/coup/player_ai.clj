@@ -17,13 +17,32 @@
   [{:keys [influence]}]
   (first influence))
 
+(defn- coup?
+  [{:keys [coins]}]
+  (> coins 6))
+
 (defn- assassinate?
   [{:keys [influence coins]}]
   (if (and (> coins 2) (some #(= % :assassin) influence)) true false))
 
+(defn- tax?
+  [{:keys [influence]}]
+  (some #(= % :duke) influence))
+
+(defn- exchange?
+  [{:keys [influence]}]
+  (some #(= % :ambassador) influence))
+
+(defn- steal?
+  [{:keys [influence]}]
+  (some #(= % :captain) influence))
+
+(defn- income? [] true)
+(defn- foreign-aid? [] true)
+
 (defn make-decision
   [game-state player]
-  (if (>= (get player :coins) 7)
+  (if (coup? player)
     (let [player-b (choose-player game-state player)]
       [coup player player-b (choose-influence player-b)])
     [income player]))
