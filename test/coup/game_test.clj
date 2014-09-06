@@ -7,7 +7,10 @@
                                  :influence   [:contessa :assassin]}
                                 {:player-name "player-b"
                                  :coins 2
-                                 :influence   [:duke :captain]}]})
+                                 :influence   [:duke :captain]}]
+                      :bank 48
+                      :deck [:contessa :duke :ambassador :captain :assassin
+                                  :duke :assassin :contessa :captain :ambassador]})
 
 
 (fact "gen-game returns a collection of player-count size"
@@ -21,9 +24,9 @@
       (#'coup.game/player-index (second (:players @game-state))) => 1)
 
 (fact "run-game returns the winner of the game"
-      (run-game {:game-state test-game-state :testing true}) => {:player-name "player-a"
-                                                                 :coins 0
-                                                                 :influence [:assassin]})
+      (run-game {:game-state test-game-state :testing true}) => {:player-name "player-b"
+                                                                 :coins 1
+                                                                 :influence [:captian]})
 
 (fact "remove-players should remove a player from the game-state"
       (against-background (before :checks (reset! game-state (assoc-in test-game-state [:players 0 :influence] []))))
@@ -37,7 +40,10 @@
       (against-background (before :facts (reset! game-state test-game-state)))
       (update-players [{:player-name "player-a" :influence [:assassin]}
                        {:player-name "player-b" :influence []}]) => {:players [{:player-name "player-a" :influence   [:assassin]}
-                                                                               {:player-name "player-b" :influence   []}]})
+                                                                               {:player-name "player-b" :influence   []}]
+                                                                     :bank 48
+                                                                     :deck [:contessa :duke :ambassador :captain :assassin
+                                                                            :duke :assassin :contessa :captain :ambassador]})
 
 (facts "about game-over?"
   (fact "the game is over when there is only one player left"

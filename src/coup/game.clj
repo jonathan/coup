@@ -19,6 +19,8 @@
   (if (contains? game-options :game-state)
     (reset! game-state (get game-options :game-state))
     (reset! game-state {:players (vec (gen-players player-names))
+                        :deck    [:contessa :duke :ambassador :captain :assassin
+                                  :duke :assassin :contessa :captain :ambassador]
                         :bank (- 50 (* 2 (count player-names)))})))
 
 (defn- player-index

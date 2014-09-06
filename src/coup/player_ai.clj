@@ -1,5 +1,5 @@
 (ns coup.player-ai
-  (:require [coup.rules :refer :all]))
+  (:use coup.rules))
 
 (defn read-input
   []
@@ -10,7 +10,7 @@
   (read-line))
 
 (defn- choose-player
-  [game-state player]
+  [game-state player action]
   (first (filter #(not= (get player :player-name) (get % :player-name)) (get game-state :players))))
 
 (defn- choose-influence
@@ -19,33 +19,45 @@
 
 (defn- coup?
   [{:keys [coins]}]
-  (> coins 6))
+  (if (> coins 6) #'coup nil))
 
 (defn- assassinate?
   [{:keys [influence coins]}]
-  (if (and (> coins 2) (some #(= % :assassin) influence)) true false))
+  ;(println "influence: " influence)
+  (if (and (> coins 2) (some #(= % :assassin) influence)) #'assassinate nil))
 
 (defn- tax?
   [{:keys [influence]}]
-  (some #(= % :duke) influence))
+  (if (some #(= % :duke) influence) #'tax nil))
 
 (defn- exchange?
   [{:keys [influence]}]
-  (some #(= % :ambassador) influence))
+  (if (some #(= % :ambassador) influence) #'exchange nil))
 
 (defn- steal?
   [{:keys [influence]}]
-  (some #(= % :captain) influence))
+  (if (some #(= % :captain) influence) #'steal nil))
 
-(defn- income? [] true)
-(defn- foreign-aid? [] true)
+(defn- income? [player] (if true #'income nil))
+(defn- foreign-aid? [player] (if true #'foreign-aid nil))
+
+(defn- choose-action
+  [player]
+  (first (remove nil? (map #(% player) [coup? assassinate? tax? steal? exchange? foreign-aid? income?]))))
 
 (defn make-decision
   [game-state player]
-  (if (coup? player)
-    (let [player-b (choose-player game-state player)]
-      [coup player player-b (choose-influence player-b)])
-    [income player]))
+  (let [action (choose-action player)]
+    (cond
+      (some #(= % action) [#'assassinate #'coup])
+        (let [player-b (choose-player game-state player action)]
+             [action player player-b (choose-influence player-b)])
+      (some #(= % action) [#'steal])
+        (let [player-b (choose-player game-state player action)]
+             [action player player-b])
+      (some #(= % action) [#'exchange])
+        [action player (get game-state :deck)]
+      :default [action player])))
 
 (defn execute-action
   [[action & players]]
