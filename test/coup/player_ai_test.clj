@@ -1,5 +1,5 @@
 (ns coup.player-ai_test
-  (:use midje.sweet coup.player-ai))
+  (:use midje.sweet coup.rules coup.player-ai))
 
 (def player-a {:player-name "player-a"
                :coins 0
@@ -24,7 +24,7 @@
 
 (facts "about choose-player"
        (fact "the chosen player isn't the one passed in"
-             (#'coup.player-ai/choose-player game-state player-a coup) => player-b))
+             (#'coup.player-ai/choose-player game-state player-a #'coup) => player-b))
 
 (facts "about choose-influence"
        (background (around :facts (let [test-player-a (assoc player-a :influence [:duke])] ?form)))

@@ -24,9 +24,7 @@
       (#'coup.game/player-index (second (:players @game-state))) => 1)
 
 (fact "run-game returns the winner of the game"
-      (run-game {:game-state test-game-state :testing true}) => {:player-name "player-b"
-                                                                 :coins 1
-                                                                 :influence [:captian]})
+      (run-game {:game-state test-game-state :testing true}) => (contains {:player-name "player-b"}))
 
 (fact "remove-players should remove a player from the game-state"
       (against-background (before :checks (reset! game-state (assoc-in test-game-state [:players 0 :influence] []))))

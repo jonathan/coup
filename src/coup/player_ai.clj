@@ -38,8 +38,8 @@
   [{:keys [influence]}]
   (if (some #(= % :captain) influence) #'steal nil))
 
-(defn- income? [player] (if true #'income nil))
-(defn- foreign-aid? [player] (if true #'foreign-aid nil))
+(defn- income? [player] #'income)
+(defn- foreign-aid? [player] #'foreign-aid)
 
 (defn- choose-action
   [player]
