@@ -1,14 +1,6 @@
 (ns coup.player-ai
   (:use coup.rules))
 
-(defn read-input
-  []
-  (println "Player Actions:")
-  (println "1. Income")
-  (println "2. Foreign Aid")
-  (print "Action (1-2): ")
-  (read-line))
-
 (defn- choose-player
   [game-state player action]
   (first (filter #(not= (get player :player-name) (get % :player-name)) (get game-state :players))))
@@ -23,7 +15,6 @@
 
 (defn- assassinate?
   [{:keys [influence coins]}]
-  ;(println "influence: " influence)
   (if (and (> coins 2) (some #(= % :assassin) influence)) #'assassinate nil))
 
 (defn- tax?
@@ -59,6 +50,4 @@
         [action player (get game-state :deck)]
       :default [action player])))
 
-(defn execute-action
-  [[action & players]]
-  (apply action players))
+

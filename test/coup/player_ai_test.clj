@@ -31,11 +31,6 @@
        (fact "the chosen player picks an influence to discard"
              (#'coup.player-ai/choose-influence test-player-a) => :duke))
 
-(facts "about execute-action"
-       (background (around :facts (let [test-player-a (assoc player-a :coins 0)] ?form)))
-       (fact "the income action and player-a should run the income action on them"
-             (execute-action [income test-player-a]) => [(assoc test-player-a :coins 1)]))
-
 (facts "about assassinate?"
        (background (around :facts (let [test-player-a (assoc player-a :influence [:duke])
                                         test-player-b (assoc player-b :influence [:assassin])] ?form)))

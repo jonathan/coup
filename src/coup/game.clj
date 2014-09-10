@@ -1,6 +1,6 @@
 (ns coup.game
   (:require [coup.rules :as rules]
-            [coup.player-ai :as player-ai]))
+            [coup.player-input :as player-input]))
 
 (def game-state (atom {}))
 
@@ -56,13 +56,9 @@
       (first players)
       (get players (inc (player-index player))))))
 
-(defn player-input
+(defn player-choice
   [player]
-  ;(case (player-ai/read-input)
-  ;  "1" "looks like you want to do Income"
-  ;  "2" "Foreign Aid, eh?"
-  ;  "Can't figure you out.")
-  (update-players (player-ai/execute-action (player-ai/make-decision @game-state player)))
+  (update-players (player-input/execute-action (player-input/make-decision @game-state player)))
   (next-player player))
 
 (defn run-game
@@ -77,4 +73,4 @@
     (if (game-over?)
       (first (get @game-state :players))
       ; Get the player's choice
-      (recur (player-input player)))))
+      (recur (player-choice player)))))
