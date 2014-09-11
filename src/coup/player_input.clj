@@ -2,7 +2,7 @@
   (:use coup.rules)
   (:require [coup.player-ai :as player-ai]))
 
-(defn- choose-action
+(defn- choose-action-options
   [{:keys [influence]}]
   (println "Your influence" influence)
   (println "Player Actions:")
@@ -32,9 +32,9 @@
   (println "Pick Influence: " influence)
   (keyword (read-line)))
 
-(defn read-input
+(defn- choose-action
   [game-state player]
-  (choose-action player)
+  (choose-action-options player)
   (let [choice (read-line)]
     (case choice
       "1" [income player]
@@ -49,7 +49,7 @@
 (defn make-decision
   [game-state player]
   (if (get player :human)
-    (read-input player)
+    (choose-action player)
     (player-ai/make-decision game-state player)))
 
 (defn execute-action
